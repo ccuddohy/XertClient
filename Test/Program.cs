@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using XertClient;
 
+
+/// <summary>
+/// This project is just for quick system level testing of the API
+/// </summary>
+
 namespace Test
 {
 	class Program
