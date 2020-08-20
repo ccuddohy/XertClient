@@ -7,16 +7,14 @@ using System.Threading.Tasks;
 
 namespace XertClient
 {
-	class Client
+	public class Client
 	{
 		readonly HttpClient _Client;
 		private BarrierToken _Token;
 		public Client()
 		{
 			_Client = new HttpClient();
-			_Token = null;
 		}
-		
 
 		/// <summary>
 		/// Returns an access token, available to registered users. The function should throw on any login problem.
@@ -58,6 +56,68 @@ namespace XertClient
 			}
 		}
 
+		public async Task<List<XertWorkout>> GetUsersWorkouts()
+		{
+			using (var request = new HttpRequestMessage(new HttpMethod("GET"), "https://www.xertonline.com/oauth/workouts"))
+			{
+				request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + _Token.access_token);
+				HttpResponseMessage response = await _Client.SendAsync(request);
+				string respString = await response.Content.ReadAsStringAsync();
+				UserWorkouts userWOs = JsonConvert.DeserializeObject<UserWorkouts>(respString);
+				if (userWOs.success)
+				{
+					return userWOs.workouts;
+				}
+				else
+				{
+					Exception execp = new Exception("There was an unknown error in GetUsersWorkouts. There were " +
+						Convert.ToString(userWOs.workouts.Count) + " workouts.");
+					throw execp;
+				}
+			}
+		}
+
+		public class XertWorkout
+		{
+			public class set
+			{
+				public class ValuePairIntString
+				{
+					public string type { get; set; }
+					public float value { get; set; }
+				}
+				public class ValuePairStringString
+				{
+					public string type { get; set; }
+					public string value { get; set; }
+				}
+				public string DT_RowId { get; set; }
+				public string sequence { get; set; }
+				public string name { get; set; }
+				public ValuePairIntString power { get; set; }
+				public ValuePairStringString duration { get; set; }
+				public ValuePairIntString rib_power { get; set; }
+				public ValuePairStringString rib_duration { get; set; }
+				public string interval_count { get; set; }
+			}
+			public string _id { get; set; }
+			public string path { get; set; }
+			//public string end { get; set; }
+			public string name { get; set; }
+			public string description { get; set; }
+			public string workout { get; set; }
+			public List<set> sets { get; set; }
+			public string coach { get; set; }
+			public bool recommended { get; set; }
+			public string owner { get; set; }
+			public string focus { get; set; }
+			public float xss { get; set; }
+			public string duration { get; set; }
+			public float advisorScore { get; set; }
+			public float difficulty { get; set; }
+			public string rating { get; set; }
+		}
+
 		class BarrierToken
 		{
 			public string access_token { get; set; }
@@ -74,49 +134,11 @@ namespace XertClient
 			public UserWorkouts()
 			{
 				success = false;
-				workouts = new List<WorkoutObj>();
+				workouts = new List<XertWorkout>();
 			}
-			public List<WorkoutObj> workouts { get; set; }
+			public List<XertWorkout> workouts { get; set; }
 			public bool success { get; set; }
-			public class WorkoutObj
-			{
-				public class set
-				{
-					public class ValuePairIntString
-					{
-						public string type { get; set; }
-						public float value { get; set; }
-					}
-					public class ValuePairStringString
-					{
-						public string type { get; set; }
-						public string value { get; set; }
-					}
-					public string DT_RowId { get; set; }
-					public string sequence { get; set; }
-					public string name { get; set; }
-					public ValuePairIntString power { get; set; }
-					public ValuePairStringString duration { get; set; }
-					public ValuePairIntString rib_power { get; set; }
-					public ValuePairStringString rib_duration { get; set; }
-					public string interval_count { get; set; }
-				}
-				public string _id { get; set; }
-				public string path { get; set; }
-				//public string end { get; set; }
-				public string name { get; set; }
-				public string description { get; set; }
-				public string workout { get; set; }
-				public List<set> sets { get; set; }
-				public string coach { get; set; }
-				public bool recommended { get; set; }
-				public string owner { get; set; }
-				public string focus { get; set; }
-				public float xss { get; set; }
-				public string duration { get; set; }
-				public float difficulity { get; set; }
-				public string rating { get; set; }
-			}
+			
 		}
 
 	}

@@ -5,6 +5,11 @@ VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XertClient", "XertClient\XertClient.csproj", "{69B40168-C43E-4E13-85E8-BAE0E176FA6D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{A7646D85-3495-4739-B3C1-E54934394E43}"
+	ProjectSection(ProjectDependencies) = postProject
+		{69B40168-C43E-4E13-85E8-BAE0E176FA6D} = {69B40168-C43E-4E13-85E8-BAE0E176FA6D}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +20,10 @@ Global
 		{69B40168-C43E-4E13-85E8-BAE0E176FA6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69B40168-C43E-4E13-85E8-BAE0E176FA6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69B40168-C43E-4E13-85E8-BAE0E176FA6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7646D85-3495-4739-B3C1-E54934394E43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7646D85-3495-4739-B3C1-E54934394E43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7646D85-3495-4739-B3C1-E54934394E43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7646D85-3495-4739-B3C1-E54934394E43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
