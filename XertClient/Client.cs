@@ -17,7 +17,7 @@ namespace XertClient
 		}
 
 		/// <summary>
-		/// Returns an access token, available to registered users. The function should throw on any login problem.
+		/// Gets an access token, available to registered users. The function should throw on any login problem.
 		/// The curl message is:
 		/// curl -u xert_public:xert_public -POST "https://www.xertonline.com/oauth/token" -d 'grant_type=refresh_token' -d 'refresh_token=1badfdee0f72b847dc91d1baf9e5c095c774c14a'
 		/// </summary>
@@ -56,8 +56,19 @@ namespace XertClient
 			}
 		}
 
+		/// <summary>
+		/// Returns a list of workouts. This function requires login'
+		/// is required to obtain a token. The curl call is:
+		/// curl -X GET "https://www.xertonline.com/oauth/workouts" -H "Authorization: Bearer <token>"
+		/// </summary>
+		/// <param name="token"></param>
+		/// <returns></returns>
 		public async Task<List<XertWorkout>> GetUsersWorkouts()
 		{
+			if (null == _Token)
+			{
+				throw new Exception("GetUsersWorkouts() Exception! You must Log In before calling this function!");
+			}
 			using (var request = new HttpRequestMessage(new HttpMethod("GET"), "https://www.xertonline.com/oauth/workouts"))
 			{
 				request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + _Token.access_token);
