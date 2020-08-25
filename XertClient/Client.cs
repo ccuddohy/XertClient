@@ -5,16 +5,23 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("XertClientNUnitTest")]
+
 namespace XertClient
 {
 	public class Client
 	{
-		readonly HttpClient _Client;
-		private BarrierToken _Token;
+		internal Client(HttpMessageHandler handler)
+		{
+			_Client = new HttpClient(handler);
+		}
 		public Client()
 		{
 			_Client = new HttpClient();
 		}
+
+		readonly HttpClient _Client;
+		private BarrierToken _Token;
 
 		/// <summary>
 		/// Gets an access token, available to registered users. The function should throw on any login problem.
@@ -37,6 +44,7 @@ namespace XertClient
 				request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
 				HttpResponseMessage response = await _Client.SendAsync(request);
 				string respString = await response.Content.ReadAsStringAsync();
+				throw new Exception("yep");
 				_Token = JsonConvert.DeserializeObject<BarrierToken>(respString);
 			}
 			if (null != _Token)
