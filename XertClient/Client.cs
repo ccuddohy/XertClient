@@ -85,7 +85,7 @@ namespace XertClient
 				}
 				else if (string.IsNullOrEmpty(_Token.access_token))//access token empty 
 				{
-					throw new Exception("XertClient LogIn failed! The cause is unknown"  );
+					throw new Exception("XertClient LogIn failed! The access token is empty"  );
 				}
 			}
 			else

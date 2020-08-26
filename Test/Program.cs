@@ -18,8 +18,7 @@ namespace Test
 			try
 			{
 				Client _client = new Client();
-				//await _client.Login("chriscuddohy", "kRLvnHGjLC7J");
-				await _client.Login("chriscuddoh", "kRLvnHGjLC7J");
+				await _client.Login("chriscuddohy", "kRLvnHGjLC7J");
 				List<Client.XertWorkout> WOs = await _client.GetUsersWorkouts();
 				Console.WriteLine("There were {0} workouts returned", WOs.Count);
 			}
