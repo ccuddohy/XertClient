@@ -173,7 +173,6 @@ namespace XertClientNUnitTest
 			//{
 			//	int t = 1;
 			//}
-
 		}
 
 		[Test]
