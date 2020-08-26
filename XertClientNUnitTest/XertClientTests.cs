@@ -1,66 +1,118 @@
 using NUnit.Framework;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Threading;
 using System.Net;
 using XertClient;
 using System;
-using Moq;
-using Moq.Protected;
+
 
 namespace XertClientNUnitTest
 {
 	public class Tests
 	{
-		//class MockHandler : HttpMessageHandler
-		//{
-		//	public virtual HttpResponseMessage Send(HttpRequestMessage request)
-		//	{
-		//		throw new NotImplementedException("Now we can setup this method with our mocking framework");
-		//	}
-		//	protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
-		//	{
-		//		return Task.FromResult(Send(request));
-		//	}
-		//}
-
-		Mock<HttpMessageHandler> handlerMock;// = new Mock<HttpMessageHandler>(MockBehavior.Strict);
-		[SetUp]
-		public void Setup()
+		/// <summary>
+		/// A Mock of the HttpMessageHandler for unit testing the client.
+		/// </summary>
+		class MyMockHandler : HttpMessageHandler
 		{
-			handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+			/// <summary>
+			/// Customize the return response message from SendAsync. 
+			/// </summary>
+			public string SendAsyncReturnContent { get; private set; }
+			public HttpStatusCode SendAsyncStatusCode {get; private set;}
+			public void SetAsyncReturnContent(string newContent)
+			{
+				SendAsyncReturnContent = newContent;
+			}
+			public void SetAsyncStatusCode(HttpStatusCode code)
+			{
+				SendAsyncStatusCode = code;
+			}
+			protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
+			{
+				return Task.FromResult(new HttpResponseMessage()
+				{
+					StatusCode = SendAsyncStatusCode,
+					Content = new StringContent(SendAsyncReturnContent)
+				});
+			}
+		}
+		
 
-			handlerMock
-				 .Protected()
-				 // Setup the PROTECTED method to mock
-				 .Setup<Task<HttpResponseMessage>>(
-					  "SendAsync",
-					  ItExpr.IsAny<HttpRequestMessage>(),
-					  ItExpr.IsAny<CancellationToken>()
-				 )
-				 // prepare the expected response of the mocked http call
-				 .ReturnsAsync(new HttpResponseMessage()
-				 {
-					   StatusCode = HttpStatusCode.OK,
-					   Content = new StringContent("[{'id':1,'value':'1'}]"),
-				 })
-				 .Verifiable();
+		[Test]
+		public void TestLoginJsonConvertExcept()
+		{
+			MyMockHandler mockHandler = new MyMockHandler();
+			mockHandler.SetAsyncReturnContent("[{'id':1,'value':'1'}]");
+			mockHandler.SetAsyncStatusCode(HttpStatusCode.OK);
 
+			Client _client = new Client(mockHandler);
+			//try
+			//{
+			//	Task task = _client.Login("userName", "password");
+			//	task.Wait();
 
+			//	int x = 1;
+			//}
+			//catch (Exception ex)
+			//{
+			//	int t = 1;
+			//}
+
+			string expectedMessage = "XertClient LogIn failed! Error: ?. Error description: Cannot deserialize the current JSON array " +
+				"(e.g. [1,2,3]) into type 'XertClient.Client+BarrierToken' because the type requires a JSON object (e.g. {\"name\":\"value\"}) " +
+				"to deserialize correctly.\r\nTo fix this error either change the JSON to a JSON object (e.g. {\"name\":\"value\"}) or change " +
+				"the deserialized type to an array or a type that implements a collection interface (e.g. ICollection, IList) like List<T> that " + "" +
+				"can be deserialized from a JSON array. JsonArrayAttribute can also be added to the type to force it to deserialize from a JSON " +
+				"array.\r\nPath '', line 1, position 1.";
+
+			Exception ex = Assert.ThrowsAsync<Exception>(() => _client.Login("userName", "password"));
+			Assert.That(ex.Message, Is.EqualTo(expectedMessage));
 		}
 
 		[Test]
-		public void TestLogin()
+		public void TestLoginProblemResponses()
 		{
-			
-			//MockHandler mockHandler = new MockHandler();
-			Client _client = new Client(handlerMock.Object);
+			MyMockHandler mockHandler = new MyMockHandler();
+			mockHandler.SetAsyncReturnContent("[{'id':1,'value':'1'}]");
 
-			//Task<LogEntity> task = Task.Run<LogEntity>(async () => await GetLogAsync());
-
-			Assert.DoesNotThrow(() => Task.Run(async () => await _client.Login("userName", "password")));
-			
-		}
+			mockHandler.SetAsyncStatusCode(HttpStatusCode.BadRequest);
+			Client _client = new Client(mockHandler);
+			string expectedMessage = "Login exception. status code: BadRequestReasonPhrase: Bad Request Content: System.Net.Http.StringContent RequestMessage: ";
+			Exception ex = Assert.ThrowsAsync<Exception>(() => _client.Login("userName", "password"));
+			Assert.That(ex.Message, Is.EqualTo(expectedMessage));
 		
+			
+			mockHandler.SetAsyncStatusCode(HttpStatusCode.NotFound);
+			_client = new Client(mockHandler);
+			expectedMessage = "Login exception. status code: NotFoundReasonPhrase: Not Found Content: System.Net.Http.StringContent RequestMessage: ";
+			ex = Assert.ThrowsAsync<Exception>(() => _client.Login("userName", "password"));
+			Assert.That(ex.Message, Is.EqualTo(expectedMessage));
+
+			mockHandler.SetAsyncStatusCode(HttpStatusCode.InternalServerError);
+			_client = new Client(mockHandler);
+			expectedMessage = "Login exception. status code: InternalServerErrorReasonPhrase: Internal Server Error Content: System.Net.Http.StringContent RequestMessage: ";
+			ex = Assert.ThrowsAsync<Exception>(() => _client.Login("userName", "password"));
+			Assert.That(ex.Message, Is.EqualTo(expectedMessage));
+
+			mockHandler.SetAsyncStatusCode(HttpStatusCode.ServiceUnavailable);
+			_client = new Client(mockHandler);
+			expectedMessage = "Login exception. status code: ServiceUnavailableReasonPhrase: Service Unavailable Content: System.Net.Http.StringContent RequestMessage: ";
+			ex = Assert.ThrowsAsync<Exception>(() => _client.Login("userName", "password"));
+			Assert.That(ex.Message, Is.EqualTo(expectedMessage));
+
+			//try
+			//{
+			//	Task task = _client.Login("userName", "password");
+			//	task.Wait();
+
+			//	int x = 1;
+			//}
+			//catch (Exception exA)
+			//{
+			//	int t = 1;
+			//}
+		}
+
 	}
 }

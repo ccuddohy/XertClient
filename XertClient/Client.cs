@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Text;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("XertClientNUnitTest")]
 
@@ -43,9 +44,38 @@ namespace XertClient
 				request.Content = new StringContent(string.Join("&", contentList));
 				request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
 				HttpResponseMessage response = await _Client.SendAsync(request);
-				string respString = await response.Content.ReadAsStringAsync();
-				throw new Exception("yep");
-				_Token = JsonConvert.DeserializeObject<BarrierToken>(respString);
+				if (response.IsSuccessStatusCode)
+				{
+					string respString = await response.Content.ReadAsStringAsync();
+					try
+					{
+						_Token = JsonConvert.DeserializeObject<BarrierToken>(respString);
+					}
+					catch(Exception ex)
+					{
+						int t = 1;
+						if (null == _Token)
+						{
+							_Token = new BarrierToken()
+							{
+								error = "?",
+								error_description = ex.Message
+							};
+						}
+					}
+				}
+				else
+				{
+					StringBuilder sBErr = new StringBuilder("Login exception. status code: ");
+					sBErr.Append(response.StatusCode.ToString());
+					sBErr.Append("ReasonPhrase: ");
+					sBErr.Append(response.ReasonPhrase);
+					sBErr.Append(" Content: ");
+					sBErr.Append( response.Content);
+					sBErr.Append(" RequestMessage: ");
+					sBErr.Append( response.RequestMessage);
+					throw new Exception(sBErr.ToString());		
+				}
 			}
 			if (null != _Token)
 			{
