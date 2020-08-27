@@ -22,12 +22,16 @@ namespace XertClient
 		}
 
 		readonly HttpClient _Client;
-		private BarrierToken _Token;
+		internal BarrierToken _Token;
 
 		/// <summary>
 		/// Gets an access token, available to registered users. The function should throw on any login problem.
 		/// The curl message is:
-		/// curl -u xert_public:xert_public -POST "https://www.xertonline.com/oauth/token" -d 'grant_type=refresh_token' -d 'refresh_token=1badfdee0f72b847dc91d1baf9e5c095c774c14a'
+		/// curl -u xert_public:xert_public -POST "https://www.xertonline.com/oauth/token" -d 'grant_type=refresh_token' -d 
+		/// 'refresh_token=1badfdee0f72b847dc91d1baf9e5c095c774c14a'
+		/// Exceptions in deserialize are handled and used to fill in error information of the BarrierToken, with the risk of loosing the
+		/// stack trace, but these should be obvious errors but this is worth reconsidering 8/27/2020. I think it may be more useful to 
+		/// present the user with workable information and this seems like it may be appropriate...
 		/// </summary>
 		/// <returns>BarrierTokenObject/returns>
 		public async Task Login(string userName, string password)
@@ -53,7 +57,6 @@ namespace XertClient
 					}
 					catch(Exception ex)
 					{
-						int t = 1;
 						if (null == _Token)
 						{
 							_Token = new BarrierToken()
@@ -98,6 +101,7 @@ namespace XertClient
 		/// Returns a list of workouts. This function requires login'
 		/// is required to obtain a token. The curl call is:
 		/// curl -X GET "https://www.xertonline.com/oauth/workouts" -H "Authorization: Bearer <token>"
+		/// I am refactoring any exception of the deserialize call but it is worth reconsidering this.
 		/// </summary>
 		/// <param name="token"></param>
 		/// <returns></returns>
@@ -111,17 +115,39 @@ namespace XertClient
 			{
 				request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + _Token.access_token);
 				HttpResponseMessage response = await _Client.SendAsync(request);
-				string respString = await response.Content.ReadAsStringAsync();
-				UserWorkouts userWOs = JsonConvert.DeserializeObject<UserWorkouts>(respString);
-				if (userWOs.success)
+				if (response.IsSuccessStatusCode)
 				{
-					return userWOs.workouts;
+					string respString = await response.Content.ReadAsStringAsync();
+					try
+					{
+						UserWorkouts userWOs = JsonConvert.DeserializeObject<UserWorkouts>(respString);
+						if (userWOs.success)
+						{
+							return userWOs.workouts;
+						}
+						else
+						{
+							Exception execp = new Exception("There was an unknown error in GetUsersWorkouts. There were " +
+								Convert.ToString(userWOs.workouts.Count) + " workouts.");
+							throw execp;
+						}
+					}
+					catch (Exception ex)
+					{
+						throw new Exception("GetUsersWorkouts() exception. " + ex.Message, ex);
+					}
 				}
 				else
 				{
-					Exception execp = new Exception("There was an unknown error in GetUsersWorkouts. There were " +
-						Convert.ToString(userWOs.workouts.Count) + " workouts.");
-					throw execp;
+					StringBuilder sBErr = new StringBuilder("GetUsersWorkouts exception. status code: ");
+					sBErr.Append(response.StatusCode.ToString());
+					sBErr.Append("ReasonPhrase: ");
+					sBErr.Append(response.ReasonPhrase);
+					sBErr.Append(" Content: ");
+					sBErr.Append(response.Content);
+					sBErr.Append(" RequestMessage: ");
+					sBErr.Append(response.RequestMessage);
+					throw new Exception(sBErr.ToString());
 				}
 			}
 		}
@@ -148,10 +174,9 @@ namespace XertClient
 				public ValuePairIntString rib_power { get; set; }
 				public ValuePairStringString rib_duration { get; set; }
 				public string interval_count { get; set; }
-			}
+			};
 			public string _id { get; set; }
 			public string path { get; set; }
-			//public string end { get; set; }
 			public string name { get; set; }
 			public string description { get; set; }
 			public string workout { get; set; }
@@ -165,9 +190,9 @@ namespace XertClient
 			public float advisorScore { get; set; }
 			public float difficulty { get; set; }
 			public string rating { get; set; }
-		}
+		};
 
-		class BarrierToken
+		internal class BarrierToken
 		{
 			public string access_token { get; set; }
 			public int expires_in { get; set; }
@@ -188,9 +213,9 @@ namespace XertClient
 			public List<XertWorkout> workouts { get; set; }
 			public bool success { get; set; }
 			
-		}
+		};
 
-	}
+	};
 
 	
 }
