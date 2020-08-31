@@ -10,7 +10,7 @@ using System.Text;
 
 namespace XertClient
 {
-	public class Client
+	public class Client : IClient
 	{
 		internal Client(HttpMessageHandler handler)
 		{
@@ -55,7 +55,7 @@ namespace XertClient
 					{
 						_Token = JsonConvert.DeserializeObject<BarrierToken>(respString);
 					}
-					catch(Exception ex)
+					catch (Exception ex)
 					{
 						if (null == _Token)
 						{
@@ -74,10 +74,10 @@ namespace XertClient
 					sBErr.Append("ReasonPhrase: ");
 					sBErr.Append(response.ReasonPhrase);
 					sBErr.Append(" Content: ");
-					sBErr.Append( response.Content);
+					sBErr.Append(response.Content);
 					sBErr.Append(" RequestMessage: ");
-					sBErr.Append( response.RequestMessage);
-					throw new Exception(sBErr.ToString());		
+					sBErr.Append(response.RequestMessage);
+					throw new Exception(sBErr.ToString());
 				}
 			}
 			if (null != _Token)
@@ -88,7 +88,7 @@ namespace XertClient
 				}
 				else if (string.IsNullOrEmpty(_Token.access_token))//access token empty 
 				{
-					throw new Exception("XertClient LogIn failed! The access token is empty"  );
+					throw new Exception("XertClient LogIn failed! The access token is empty");
 				}
 			}
 			else
@@ -212,10 +212,10 @@ namespace XertClient
 			}
 			public List<XertWorkout> workouts { get; set; }
 			public bool success { get; set; }
-			
+
 		};
 
 	};
 
-	
+
 }

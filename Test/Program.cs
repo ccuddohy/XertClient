@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using XertClient;
 
@@ -17,9 +16,14 @@ namespace Test
 		{
 			try
 			{
-				Client _client = new Client();
-				await _client.Login("chriscuddohy", "kRLvnHGjLC7J");
-				List<Client.XertWorkout> WOs = await _client.GetUsersWorkouts();
+				IClient _client = new Client();
+				Console.WriteLine("Enter User-name");
+				string userName = Console.ReadLine();
+				Console.WriteLine("Enter Password");
+				string PassWord = Console.ReadLine();
+				await _client.Login(userName, PassWord);
+				Console.WriteLine("working");
+				List <Client.XertWorkout> WOs = await _client.GetUsersWorkouts();
 				Console.WriteLine("There were {0} workouts returned", WOs.Count);
 			}
 			catch (Exception excpt)
