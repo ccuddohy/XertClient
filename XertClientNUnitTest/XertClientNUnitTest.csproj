@@ -16,4 +16,10 @@
     <ProjectReference Include="..\XertClient\XertClient.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="FiveWorkouts.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

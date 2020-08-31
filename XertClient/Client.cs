@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Text;
+using System.Text.RegularExpressions;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("XertClientNUnitTest")]
 
@@ -117,7 +118,7 @@ namespace XertClient
 				HttpResponseMessage response = await _Client.SendAsync(request);
 				if (response.IsSuccessStatusCode)
 				{
-					string respString = await response.Content.ReadAsStringAsync();
+					var respString = await response.Content.ReadAsStringAsync();
 					try
 					{
 						UserWorkouts userWOs = JsonConvert.DeserializeObject<UserWorkouts>(respString);

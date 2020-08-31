@@ -5,6 +5,8 @@ using System.Net;
 using XertClient;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace XertClientNUnitTest
 {
@@ -40,13 +42,13 @@ namespace XertClientNUnitTest
 			{
 				SendAsyncStatusCode = code;
 			}
-			protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
+			protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, System.Threading.CancellationToken cancellationToken)
 			{
 				if(ThrowSendAsync)
 				{
 					throw new Exception("No such host");
 				}
-				return Task.FromResult(new HttpResponseMessage()
+				return await Task.FromResult(new HttpResponseMessage()
 				{
 					StatusCode = SendAsyncStatusCode,
 					Content = new StringContent(SendAsyncReturnContent)
@@ -232,31 +234,18 @@ namespace XertClientNUnitTest
 		}
 
 
-		//public async Task<List<XertWorkout>> GetUsersWorkouts()
-		//List<Client.XertWorkout> WOs = await _client.GetUsersWorkouts();
+		/// <summary>
+		/// Gets all the workouts and checks the first index for the parameters. Does not look at all the parameters for the sets.
+		/// </summary>
 		[Test]
-		public void GetWorkoutsTestWorking()
+		public void GetWorkoutsTestNormalIndxZero()
 		{
-			//_Token
 			MyMockHandler mockHandler = new MyMockHandler();
-			mockHandler.SetAsyncReturnContent(
-				"{\"StatusCode\":\"200," +
-				 "\"ReasonPhrase\":\"'OK'\"," +
-				 "\"Version\":\"1.1," +
-				 "\"Content\":\"System.Net.Http.HttpConnectionResponseContent\"," +
-				 "{\"Headers\":"+
-				  "\"Server\":\"nginx / 1.14.0,\"" +
-				  "\"Server\":\"(Ubuntu),\"" +
-				  "\"Transfer-Encoding\":\"chunked,\"" +
-				  "\"Connection\":\"keep-alive\", +" +
-				  "\"Content-Type\":\"application/json,\"" +
-				  "}}"
-				);
-
+			//the properties of the file are set in the solution, to always copy to output directory (build action none).
+			string workOutStr = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\FiveWorkouts.txt");
+			mockHandler.SetAsyncReturnContent(workOutStr);
 			mockHandler.SetAsyncStatusCode(HttpStatusCode.OK);
-			
 			Client _client = new Client(mockHandler);
-
 			_client._Token = new Client.BarrierToken()
 			{
 				access_token = "abc123",
@@ -265,21 +254,126 @@ namespace XertClientNUnitTest
 				scope = "basic",
 				refresh_token = "999999"
 			};
+			
+			Assert.DoesNotThrowAsync(() => _client.GetUsersWorkouts());
+			Task<List<Client.XertWorkout>> taskWOs = _client.GetUsersWorkouts();
+			taskWOs.Wait();
+			List<Client.XertWorkout> xertWorkouts = taskWOs.Result;
+			Assert.AreEqual(5, xertWorkouts.Count);
+			Assert.AreEqual(xertWorkouts.ElementAt(0).advisorScore, 120.5041, 0.00001);
+			Assert.IsNull(xertWorkouts.ElementAt(0).coach);
+			Assert.AreEqual(xertWorkouts.ElementAt(0).description, "Tabata's are a type of HIIT workout designed with a 2:1 work:recovery" +
+				" ratio,\r\n meaning you only get 10 seconds of rest between each 20 second bout of exercise. That short interval wont allow" +
+				" you to fully recover,\r\n which is one reason it's great for building endurance.  Notice the high difficulty score of this" +
+				" workout - d to complete this workout.");
+			Assert.AreEqual(xertWorkouts.ElementAt(0).difficulty, 100.496933, 0.0000001);
+			Assert.AreEqual(xertWorkouts.ElementAt(0).duration, "01:31:51");
+			Assert.AreEqual(xertWorkouts.ElementAt(0).focus, "Puncheur");
+			Assert.AreEqual(xertWorkouts.ElementAt(0).name, "SMART - Tabata's 300");
+			Assert.AreEqual(xertWorkouts.ElementAt(0).owner, "Admin");
+			Assert.AreEqual(xertWorkouts.ElementAt(0).path, "0uw1x5xz5gwsyb4x");
+			Assert.AreEqual(xertWorkouts.ElementAt(0).rating, "\u2666\u2666\u2666\u00bd - Difficult");
+			Assert.IsFalse(xertWorkouts.ElementAt(0).recommended);
+			Assert.AreEqual(xertWorkouts.ElementAt(0).sets.Count, 13);
+			Assert.AreEqual(xertWorkouts.ElementAt(0).workout, "Tempo");
+			Assert.AreEqual(xertWorkouts.ElementAt(0).xss, 134, 0.1);
+			Assert.AreEqual(xertWorkouts.ElementAt(0)._id, "5b195559ba614c73458b456c");
+		}
+
+		[Test]
+		public void GetWorkoutsTestNormalIndxX()
+		{
+			MyMockHandler mockHandler = new MyMockHandler();
+			//the properties of the file are set in the solution, to always copy to output directory (build action none).
+			string workOutStr = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\FiveWorkouts.txt");
+			mockHandler.SetAsyncReturnContent(workOutStr);
+			mockHandler.SetAsyncStatusCode(HttpStatusCode.OK);
+			Client _client = new Client(mockHandler);
+			_client._Token = new Client.BarrierToken()
+			{
+				access_token = "abc123",
+				expires_in = 994999,
+				token_type = "Barer",
+				scope = "basic",
+				refresh_token = "999999"
+			};
+
+			Assert.DoesNotThrowAsync(() => _client.GetUsersWorkouts());
+			Task<List<Client.XertWorkout>> taskWOs = _client.GetUsersWorkouts();
+			taskWOs.Wait();
+			List<Client.XertWorkout> xertWorkouts = taskWOs.Result;
+
+			Assert.AreEqual(xertWorkouts.ElementAt(4).name, "VO2max Target MPA - to 40% Reserve");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).owner, "Admin");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).path, "2vkxjituk8uj2i5n");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).rating, "\u2666\u2666\u2666\u2666 - Tough");
+			Assert.IsFalse(xertWorkouts.ElementAt(4).recommended);
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.Count, 4);
+			Assert.IsNull(xertWorkouts.ElementAt(4).workout);
+			Assert.AreEqual(xertWorkouts.ElementAt(4).xss, 132, 0.1);
+			Assert.AreEqual(xertWorkouts.ElementAt(4)._id, "589faf94ba614c30668b45d8");
+
+			// check a couple of sets
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(0).DT_RowId, "ilmj1nei");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(0).duration.type, "absolute");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(0).duration.value, "01:00");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(0).interval_count, "5");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(0).name, "Warmup");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(0).power.type, "relative_ltp");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(0).power.value, 70);
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(0).rib_duration.type, "absolute");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(0).rib_duration.value, "01:00");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(0).rib_power.type, "relative_ltp");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(0).rib_power.value, 90);
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(0).sequence, "0");
+
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(3).DT_RowId, "ilmj1oaz");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(3).duration.type, "absolute");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(3).duration.value, "05:00");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(3).interval_count, "1");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(3).name, "Cooldown");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(3).power.type, "relative_ftp");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(3).power.value, 50);
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(3).rib_duration.type, "absolute");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(3).rib_duration.value, "00:00");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(3).rib_power.type, "absolute");
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(3).rib_power.value, 0);
+			Assert.AreEqual(xertWorkouts.ElementAt(4).sets.ElementAt(3).sequence, "3");
+		}
+
+		[Test]
+		public void GetWorkoutsTestWorkingClasic()
+		{
+			//_Token
+			MyMockHandler mockHandler = new MyMockHandler();
+			//the properties of the file are set in the solution, to always copy to output directory (build action none).
+			string workOutStr = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\FiveWorkouts.txt");
+			mockHandler.SetAsyncReturnContent(workOutStr);
+			mockHandler.SetAsyncStatusCode(HttpStatusCode.OK);
+			Client _client = new Client(mockHandler);
+			_client._Token = new Client.BarrierToken()
+			{
+				access_token = "abc123",
+				expires_in = 994999,
+				token_type = "Barer",
+				scope = "basic",
+				refresh_token = "999999"
+			};
+			bool exceptionThrown = false;
 			try
 			{
 				Task<List<Client.XertWorkout>> taskWOs = _client.GetUsersWorkouts();
 				taskWOs.Wait();
+				List<Client.XertWorkout> xertWorkouts = taskWOs.Result;
+				Assert.AreEqual(5, xertWorkouts.Count);
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
-				int t = 1;
-				//exceptionThrown = true;
-				//Assert.AreEqual(expectedExceptionMessage, ex.Message);
+				exceptionThrown = true;
 			}
-
-
+			Assert.AreEqual(false, exceptionThrown);
 		}
-
-
 	}
+
+
 }
