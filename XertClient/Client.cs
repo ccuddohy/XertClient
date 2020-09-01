@@ -36,6 +36,10 @@ namespace XertClient
 		/// <returns>BarrierTokenObject/returns>
 		public async Task Login(string userName, string password)
 		{
+			if(string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
+			{
+				throw new Exception("User name and password must to be entered to log in.");
+			}
 			using (var request = new HttpRequestMessage(new HttpMethod("POST"), "https://www.xertonline.com/oauth/token"))
 			{
 				var base64authorization = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes("xert_public:xert_public"));
@@ -96,6 +100,7 @@ namespace XertClient
 				throw new Exception("XertClient LogIn failed! The login token is null but the cause is unknown");
 			}
 		}
+			
 
 		/// <summary>
 		/// Returns a list of workouts. This function requires login'

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using NUnit.Framework.Constraints;
 
 namespace XertClientNUnitTest
 {
@@ -188,6 +189,27 @@ namespace XertClientNUnitTest
 			Client _client = new Client(mockHandler);
 			string expectedMessage = "Login exception. status code: UnauthorizedReasonPhrase: Unauthorized Content: System.Net.Http.StringContent RequestMessage: ";
 			Exception ex = Assert.ThrowsAsync<Exception>(() => _client.Login("userName", "password"));
+			Assert.That(ex.Message, Is.EqualTo(expectedMessage));
+		}
+
+		//"User name and password must to be entered to log in"
+		[Test]
+		public void TestLoginEmpty()
+		{
+			MyMockHandler mockHandler = new MyMockHandler();
+			mockHandler.SetAsyncReturnContent("[{'id':1,'value':'1'}]");
+			mockHandler.SetAsyncStatusCode(HttpStatusCode.Unauthorized);
+			Client _client = new Client(mockHandler);
+			string expectedMessage = "User name and password must to be entered to log in.";
+			Exception ex = Assert.ThrowsAsync<Exception>(() => _client.Login("x", ""));
+			Assert.That(ex.Message, Is.EqualTo(expectedMessage));
+
+			_client = new Client(mockHandler);
+			ex = Assert.ThrowsAsync<Exception>(() => _client.Login("", "x"));
+			Assert.That(ex.Message, Is.EqualTo(expectedMessage));
+
+			_client = new Client(mockHandler);
+			ex = Assert.ThrowsAsync<Exception>(() => _client.Login("", ""));
 			Assert.That(ex.Message, Is.EqualTo(expectedMessage));
 		}
 
