@@ -2,10 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Chris Cuddohy</Authors>
+    <Description>A C# core wrapper for Xert api.</Description>
+    <PackageReleaseNotes>Original release</PackageReleaseNotes>
+    <RepositoryUrl>https://github.com/ccuddohy/XertClient</RepositoryUrl>
+    <PackageIcon>xert_teal_and_gray.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="xert_teal_and_gray.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
