@@ -4,9 +4,11 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Authors>Chris Cuddohy</Authors>
     <Description>A C# core wrapper for Xert api.</Description>
-    <PackageReleaseNotes>Original release</PackageReleaseNotes>
+    <PackageReleaseNotes>Changed name of ICLient to IXertClient</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/ccuddohy/XertClient</RepositoryUrl>
     <PackageIcon>xert_teal_and_gray.png</PackageIcon>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
