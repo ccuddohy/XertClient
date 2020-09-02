@@ -278,9 +278,9 @@ namespace XertClientNUnitTest
 			};
 			
 			Assert.DoesNotThrowAsync(() => _client.GetUsersWorkouts());
-			Task<List<Client.XertWorkout>> taskWOs = _client.GetUsersWorkouts();
+			Task<List<XertWorkout>> taskWOs = _client.GetUsersWorkouts();
 			taskWOs.Wait();
-			List<Client.XertWorkout> xertWorkouts = taskWOs.Result;
+			List<XertWorkout> xertWorkouts = taskWOs.Result;
 			Assert.AreEqual(5, xertWorkouts.Count);
 			Assert.AreEqual(xertWorkouts.ElementAt(0).advisorScore, 120.5041, 0.00001);
 			Assert.IsNull(xertWorkouts.ElementAt(0).coach);
@@ -321,9 +321,9 @@ namespace XertClientNUnitTest
 			};
 
 			Assert.DoesNotThrowAsync(() => _client.GetUsersWorkouts());
-			Task<List<Client.XertWorkout>> taskWOs = _client.GetUsersWorkouts();
+			Task<List<XertWorkout>> taskWOs = _client.GetUsersWorkouts();
 			taskWOs.Wait();
-			List<Client.XertWorkout> xertWorkouts = taskWOs.Result;
+			List<XertWorkout> xertWorkouts = taskWOs.Result;
 
 			Assert.AreEqual(xertWorkouts.ElementAt(4).name, "VO2max Target MPA - to 40% Reserve");
 			Assert.AreEqual(xertWorkouts.ElementAt(4).owner, "Admin");
@@ -384,9 +384,9 @@ namespace XertClientNUnitTest
 			bool exceptionThrown = false;
 			try
 			{
-				Task<List<Client.XertWorkout>> taskWOs = _client.GetUsersWorkouts();
+				Task<List<XertWorkout>> taskWOs = _client.GetUsersWorkouts();
 				taskWOs.Wait();
-				List<Client.XertWorkout> xertWorkouts = taskWOs.Result;
+				List<XertWorkout> xertWorkouts = taskWOs.Result;
 				Assert.AreEqual(5, xertWorkouts.Count);
 			}
 			catch (Exception)

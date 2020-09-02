@@ -5,7 +5,7 @@ namespace XertClient
 {
 	public interface IXertClient
 	{
-		Task<List<Client.XertWorkout>> GetUsersWorkouts();
+		Task<List<XertWorkout>> GetUsersWorkouts();
 		Task Login(string userName, string password);
 	}
 }

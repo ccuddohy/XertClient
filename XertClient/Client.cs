@@ -157,46 +157,6 @@ namespace XertClient
 			}
 		}
 
-		public class XertWorkout
-		{
-			public class Set
-			{
-				public class ValuePairIntString
-				{
-					public string type { get; set; }
-					public float value { get; set; }
-				}
-				public class ValuePairStringString
-				{
-					public string type { get; set; }
-					public string value { get; set; }
-				}
-				public string DT_RowId { get; set; }
-				public string sequence { get; set; }
-				public string name { get; set; }
-				public ValuePairIntString power { get; set; }
-				public ValuePairStringString duration { get; set; }
-				public ValuePairIntString rib_power { get; set; }
-				public ValuePairStringString rib_duration { get; set; }
-				public string interval_count { get; set; }
-			};
-			public string _id { get; set; }
-			public string path { get; set; }
-			public string name { get; set; }
-			public string description { get; set; }
-			public string workout { get; set; }
-			public List<Set> sets { get; set; }
-			public string coach { get; set; }
-			public bool recommended { get; set; }
-			public string owner { get; set; }
-			public string focus { get; set; }
-			public float xss { get; set; }
-			public string duration { get; set; }
-			public float advisorScore { get; set; }
-			public float difficulty { get; set; }
-			public string rating { get; set; }
-		};
-
 		internal class BarrierToken
 		{
 			public string access_token { get; set; }
@@ -220,6 +180,45 @@ namespace XertClient
 
 		};
 
+	};
+	public class XertWorkout
+	{
+		public class Set
+		{
+			public class ValuePairIntString
+			{
+				public string type { get; set; }
+				public float value { get; set; }
+			}
+			public class ValuePairStringString
+			{
+				public string type { get; set; }
+				public string value { get; set; }
+			}
+			public string DT_RowId { get; set; }
+			public string sequence { get; set; }
+			public string name { get; set; }
+			public ValuePairIntString power { get; set; }
+			public ValuePairStringString duration { get; set; }
+			public ValuePairIntString rib_power { get; set; }
+			public ValuePairStringString rib_duration { get; set; }
+			public string interval_count { get; set; }
+		};
+		public string _id { get; set; }
+		public string path { get; set; }
+		public string name { get; set; }
+		public string description { get; set; }
+		public string workout { get; set; }
+		public List<Set> sets { get; set; }
+		public string coach { get; set; }
+		public bool recommended { get; set; }
+		public string owner { get; set; }
+		public string focus { get; set; }
+		public float xss { get; set; }
+		public string duration { get; set; }
+		public float advisorScore { get; set; }
+		public float difficulty { get; set; }
+		public string rating { get; set; }
 	};
 
 

@@ -27,10 +27,10 @@ namespace Test
 				string PassWord = Console.ReadLine();
 				Console.BackgroundColor = origBG; // revert back to original
 				Console.ForegroundColor = origFG;
-				Console.WriteLine(".");
+				Console.WriteLine("One Moment");
 				await _client.Login(userName, PassWord);
 				Console.WriteLine("working");
-				List <Client.XertWorkout> WOs = await _client.GetUsersWorkouts();
+				List <XertWorkout> WOs = await _client.GetUsersWorkouts();
 				Console.WriteLine("There were {0} workouts returned", WOs.Count);
 			}
 			catch (Exception excpt)
@@ -38,7 +38,7 @@ namespace Test
 				Console.WriteLine(excpt.Message);
 			}
 
-			Console.WriteLine("\nFINISHED");
+			Console.WriteLine("\nAny Key to finish");
 			Console.ReadKey();
 		}
 	}
