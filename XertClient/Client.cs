@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Text;
+using System.Linq;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("XertClientNUnitTest")]
 
@@ -110,7 +111,7 @@ namespace XertClient
 		/// </summary>
 		/// <param name="token"></param>
 		/// <returns></returns>
-		public async Task<List<XertWorkout>> GetUsersWorkouts()
+		public async Task<List<IXertWorkout>> GetUsersWorkouts()
 		{
 			if (null == _Token)
 			{
@@ -128,7 +129,7 @@ namespace XertClient
 						UserWorkouts userWOs = JsonConvert.DeserializeObject<UserWorkouts>(respString);
 						if (userWOs.success)
 						{
-							return userWOs.workouts;
+							return userWOs.workouts.ToList<IXertWorkout>();
 						}
 						else
 						{
@@ -181,7 +182,7 @@ namespace XertClient
 		};
 
 	};
-	public class XertWorkout
+	public class XertWorkout : IXertWorkout
 	{
 		public class Set
 		{

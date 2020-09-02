@@ -30,7 +30,7 @@ namespace Test
 				Console.WriteLine("One Moment");
 				await _client.Login(userName, PassWord);
 				Console.WriteLine("working");
-				List <XertWorkout> WOs = await _client.GetUsersWorkouts();
+				List <IXertWorkout> WOs = await _client.GetUsersWorkouts();
 				Console.WriteLine("There were {0} workouts returned", WOs.Count);
 			}
 			catch (Exception excpt)
