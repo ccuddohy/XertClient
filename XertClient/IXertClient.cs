@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace XertClient
 {
-	public interface IClient
+	public interface IXertClient
 	{
 		Task<List<Client.XertWorkout>> GetUsersWorkouts();
 		Task Login(string userName, string password);

@@ -10,7 +10,7 @@ using System.Text;
 
 namespace XertClient
 {
-	public class Client : IClient
+	public class Client : IXertClient
 	{
 		internal Client(HttpMessageHandler handler)
 		{
@@ -159,7 +159,7 @@ namespace XertClient
 
 		public class XertWorkout
 		{
-			public class set
+			public class Set
 			{
 				public class ValuePairIntString
 				{
@@ -185,7 +185,7 @@ namespace XertClient
 			public string name { get; set; }
 			public string description { get; set; }
 			public string workout { get; set; }
-			public List<set> sets { get; set; }
+			public List<Set> sets { get; set; }
 			public string coach { get; set; }
 			public bool recommended { get; set; }
 			public string owner { get; set; }
@@ -208,7 +208,7 @@ namespace XertClient
 			public string error_description { get; set; }
 		}
 
-		public class UserWorkouts
+		internal class UserWorkouts
 		{
 			public UserWorkouts()
 			{

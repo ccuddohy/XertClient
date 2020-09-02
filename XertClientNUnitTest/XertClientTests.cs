@@ -263,7 +263,7 @@ namespace XertClientNUnitTest
 		public void GetWorkoutsTestNormalIndxZero()
 		{
 			MyMockHandler mockHandler = new MyMockHandler();
-			//the properties of the file are set in the solution, to always copy to output directory (build action none).
+			//the properties of the file are Set in the solution, to always copy to output directory (build action none).
 			string workOutStr = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\FiveWorkouts.txt");
 			mockHandler.SetAsyncReturnContent(workOutStr);
 			mockHandler.SetAsyncStatusCode(HttpStatusCode.OK);
@@ -306,7 +306,7 @@ namespace XertClientNUnitTest
 		public void GetWorkoutsTestNormalIndxX()
 		{
 			MyMockHandler mockHandler = new MyMockHandler();
-			//the properties of the file are set in the solution, to always copy to output directory (build action none).
+			//the properties of the file are Set in the solution, to always copy to output directory (build action none).
 			string workOutStr = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\FiveWorkouts.txt");
 			mockHandler.SetAsyncReturnContent(workOutStr);
 			mockHandler.SetAsyncStatusCode(HttpStatusCode.OK);
@@ -368,7 +368,7 @@ namespace XertClientNUnitTest
 		{
 			//_Token
 			MyMockHandler mockHandler = new MyMockHandler();
-			//the properties of the file are set in the solution, to always copy to output directory (build action none).
+			//the properties of the file are Set in the solution, to always copy to output directory (build action none).
 			string workOutStr = File.ReadAllText(TestContext.CurrentContext.TestDirectory + "\\FiveWorkouts.txt");
 			mockHandler.SetAsyncReturnContent(workOutStr);
 			mockHandler.SetAsyncStatusCode(HttpStatusCode.OK);

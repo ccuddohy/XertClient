@@ -16,11 +16,18 @@ namespace Test
 		{
 			try
 			{
-				IClient _client = new Client();
+				IXertClient _client = new Client();
 				Console.WriteLine("Enter User-name");
 				string userName = Console.ReadLine();
 				Console.WriteLine("Enter Password");
+				ConsoleColor origBG = Console.BackgroundColor; // Store original values
+				ConsoleColor origFG = Console.ForegroundColor;
+				Console.BackgroundColor = ConsoleColor.White; // Set the block color (could be anything)
+				Console.ForegroundColor = ConsoleColor.White;
 				string PassWord = Console.ReadLine();
+				Console.BackgroundColor = origBG; // revert back to original
+				Console.ForegroundColor = origFG;
+				Console.WriteLine(".");
 				await _client.Login(userName, PassWord);
 				Console.WriteLine("working");
 				List <Client.XertWorkout> WOs = await _client.GetUsersWorkouts();
