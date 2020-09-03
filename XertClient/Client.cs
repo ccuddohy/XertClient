@@ -217,6 +217,9 @@ namespace XertClient
 		public string focus { get; set; }
 		public float xss { get; set; }
 		public string duration { get; set; }
+		public bool valid_thumbnail { get; set; }
+		public string thumb { get; set; }
+		public string url { get; set; }
 		public float advisorScore { get; set; }
 		public float difficulty { get; set; }
 		public string rating { get; set; }

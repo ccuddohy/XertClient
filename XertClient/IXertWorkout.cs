@@ -17,6 +17,9 @@ namespace XertClient
 		string rating { get; set; }
 		bool recommended { get; set; }
 		List<XertWorkout.Set> sets { get; set; }
+		string thumb { get; set; }
+		bool valid_thumbnail { get; set; }
+		string url { get; set; }
 		string workout { get; set; }
 		float xss { get; set; }
 	}
