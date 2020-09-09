@@ -19,5 +19,5 @@ The solution includes:
   - local_nuget_push.bat, in the main project is provied as an example to push the package to a local package source.
 
 ### Library Objective
-The primary reason for the library is to improve the presentation of some Xert features. For example Xert has a large collection of workouts designed
-to address specific objectives indicated by a **Focus** parameter and a **dificulity** parameter.  
+The primary reason for the library is to provide an alternative to the website presentations of some Xert features. For example Xert has a large collection of workouts designed
+to address specific objectives indicated by a **Focus** parameter and a **Dificulity** parameter as well as **Duration** and **XSS** (Xert Strain Score) parameters. 
