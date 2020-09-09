@@ -14,7 +14,7 @@ fatigue status.
 The solution includes:
 - A simple command line integration project
 - A unit test project, using NUnit 
-- The main project 
+- The main project  
   - The main project complies to a dll. 
   - local_nuget_push.bat, in the main project is provied as an example to push the package to a local package source.
 
