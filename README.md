@@ -22,6 +22,7 @@ The primary reason for the library is to provide an alternative to the website p
 to address specific objectives characterized by certain workout parameters. The paramers are: **Focus Dificulity Duration and XSS** **X**ert **S**train **S**core). Some people fint the the current website presentation and filtering of the workouts less than ideal and a bit clumbsy. This library attempts to make using the for getting the workouts easy to implement on another platform
 
 ### See XertExplorer 
-I a have created a prject that uses this dll to present the workouts and filter them in a way that is hopefully easier to use.
+I a have created a prject that uses this dll to present the workouts and filter them in a way that is hopefully easier to use.   
+[XertExplorer](https://github.com/ccuddohy/XertExplorer)
 
 
