@@ -41,13 +41,13 @@ namespace Test
 					ConsoleKeyInfo k = Console.ReadKey();
 					if (k.KeyChar == 'R' || k.KeyChar == 'r')
 					{
-						List<XertWorkout> readWos = GetWorkouts("workouts.json");
+						List<IXertWorkout> readWos = DeserializeWorkoutsFromFile("workouts.json");
 						Console.WriteLine("\nThere were {0} workouts read from file", readWos.Count);
 						break;
 					}
 					if (k.KeyChar == 'W' || k.KeyChar == 'w')
 					{
-						WriteWorkoutsToFileAsync(WOs, "workouts.json");
+						SerializeWorkoutsToFile(WOs, "workouts.json");
 						break;
 					}
 					else if (k.KeyChar == 'E' || k.KeyChar == 'e')
@@ -65,20 +65,28 @@ namespace Test
 
 		}
 
-		static void WriteWorkoutsToFileAsync(List<IXertWorkout> workouts, string path)
+		static void SerializeWorkoutsToFile(List<IXertWorkout> workouts, string fileName)
 		{
-			string json = JsonSerializer.Serialize(workouts);
-			using (StreamWriter file = new StreamWriter(path, false))
+			Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
+			serializer.Converters.Add(new Newtonsoft.Json.Converters.JavaScriptDateTimeConverter());
+			serializer.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+			serializer.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto;
+			serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
+
+			using (StreamWriter sw = new StreamWriter(fileName))
+			using (Newtonsoft.Json.JsonWriter writer = new Newtonsoft.Json.JsonTextWriter(sw))
 			{
-				file.Write(json);
+				serializer.Serialize(writer, workouts, typeof(List<IXertWorkout>));
 			}
 		}
-
-		static List<XertWorkout> GetWorkouts(string path)
+		static List<IXertWorkout> DeserializeWorkoutsFromFile(string fileName)
 		{
-			String JSONtxt = File.ReadAllText(path);
-			List<XertWorkout> wkouts = JsonSerializer.Deserialize<List<XertWorkout>>(JSONtxt);//JsonSerializer.DeserializeObject<List<XertWorkout>>(JSONtxt);
-			return wkouts;
+			List<IXertWorkout> workouts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<IXertWorkout>>(File.ReadAllText(fileName), new Newtonsoft.Json.JsonSerializerSettings
+			{
+				TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto,
+				NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore,
+			});
+			return workouts;
 		}
 
 	}
